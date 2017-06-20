@@ -9,7 +9,7 @@ setup(
     author = 'Adarsh Honawad',
     author_email = 'adarsh2397@gmail.com',
     url = 'https://github.com/adarsh2397/PyMyDb',
-    download_url = 'https://github.com/adarsh2397/PyMyDb/archive/0.1.tar.gz',
+    download_url = 'https://github.com/adarsh2397/PyMyDb/archive/0.2.tar.gz',
     keywords = ['mysql','sql','database','python','package'],
     classifiers = [],
 )
