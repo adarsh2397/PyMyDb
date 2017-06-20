@@ -193,10 +193,10 @@ Database: {database}
         if not self.connection:
             raise error.NotConnected
         else:
-            with self.connection.cursor():
+            with self.connection.cursor() as cursor:
                 cursor.execute(query)
                 cursor.close()
-        
+                self.connection.commit()
 
     def close(self):
         """Function to close a connection if present"""
