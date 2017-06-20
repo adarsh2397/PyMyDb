@@ -2,6 +2,4 @@ import pymydb
 
 myconnection = pymydb.MySQL()
 
-print(myconnection)
-
-myconnection.drop_db()
+print(myconnection.get_records('trial3',count=4))

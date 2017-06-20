@@ -75,7 +75,7 @@ Database: {database}
                 cursor.execute(query)
                 cursor.close()
 
-    def desc_table(self, table_name):
+    def desc_table(self, table_name=''):
         """Function that gives a Description of the table"""
         if not self.connection:
             raise error.NotConnected
@@ -85,8 +85,8 @@ Database: {database}
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
                 result = cursor.fetchall()
-                print result
                 cursor.close()
+                return result
 
     def insert(self, table_name='', fields=None, values=None):
         """Function to insert a record into the given table"""
@@ -112,40 +112,61 @@ Database: {database}
                 #self.connection.commit()
                 cursor.close()
 
-    def get_record(self, table_name, columns, condition='',
-                   orderby=None, ascending=True, distinct=False):
-        """Function that gets a record based on the arguments specified"""
+    def get_records(self, table_name, columns=None, condition='',
+                    orderby=None, ascending=True, distinct=False, count=None):
+        """Function that gets records based on the arguments specified"""
         if not self.connection:
             raise error.NotConnected
         else:
-            if len(columns) != 0:
+            query = ''
+            if columns:
                 params = '`, `'.join(columns)
-                if condition != '':
-                    query = "SELECT" + ("DISTINCT" if distinct else "")\
-                            + " `" + params + "` FROM " + table_name + " WHERE " + condition\
-                            + (" ORDER BY `" + '`, `'.join(orderby) + "`" if orderby else "")\
-                            + (" ASC " if ascending else " DSC ")
+            else:
+                params = "*"
+            if condition != '':
+                query = "SELECT " + ("DISTINCT" if distinct else "")\
+                        + " `" + params + "` FROM " + table_name + " WHERE " + condition\
+                        + (" ORDER BY `" + '`, `'.join(orderby) + "`" if orderby else "")\
+                        + (" ASC " if (ascending and orderby) else " DSC ")
 
+            else:
+                query = "SELECT " + ("DISTINCT" if distinct else "")\
+                        + " `" + params + "` FROM " + table_name\
+                        + (" ORDER BY `" + '`, `'.join(orderby) + "`" if orderby else "")\
+                        + (" ASC " if (ascending and orderby) else " DSC ")
+
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                if count:
+                    result = cursor.fetchmany(size=count)
                 else:
-                    query = "SELECT" + ("DISTINCT" if distinct else "")\
-                            + " `" + params + "` FROM " + table_name\
-                            + (" ORDER BY `" + '`, `'.join(orderby) + "`" if orderby else "")\
-                            + (" ASC " if ascending else " DSC ")
-                print query
-
-                with self.connection.cursor() as cursor:
-                    cursor.execute(query)
                     result = cursor.fetchall()
-                    data = zip(*result)
-                    records = []
-                    for iterator_1 in range(0, len(data[0])):
-                        record = []
-                        for iterator_2 in range(0, len(data)):
-                            record.append(data[iterator_2][iterator_1])
+                data = zip(*result)
+                records = []
+                for iterator_1 in range(0, len(data[0])):
+                    record = []
+                    for iterator_2 in range(0, len(data)):
+                        record.append(data[iterator_2][iterator_1])
+                    records.append(record)
+                cursor.close()
 
-                        records.append(record)
-                    cursor.close()
-                    return records
+                return records
+
+    def get_columns(self, table_name):
+        """Function to get a list of the columns of the given table"""
+
+        if not self.connection:
+            raise error.NotConnected
+        else:
+            query = "SHOW COLUMNS FROM " + table_name
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                columns = []
+                data = cursor.fetchall()
+                for column in data:
+                    columns.append(column[0])
+                cursor.close()
+                return columns
 
     def update(self, table_name, columns, values, condition=''):
         """Function to update records in the given Table"""
