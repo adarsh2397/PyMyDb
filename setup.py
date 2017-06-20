@@ -4,7 +4,7 @@ setup(
     name = 'pymydb',
     packages = ['pymydb'],
     install_requires = ['pymysql'],
-    version = '0.1',
+    version = '0.2',
     description = 'A wrapper over PyMySQL Package to simplify MySQL database usage',
     author = 'Adarsh Honawad',
     author_email = 'adarsh2397@gmail.com',
