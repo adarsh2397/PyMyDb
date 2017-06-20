@@ -202,9 +202,9 @@ Database: {database}
         """Function to close a connection if present"""
 
         if not self.connection:
-            self.connection.close()
-        else:
             raise error.NotConnected
+        else:
+            self.connection.close()
 
     def __del__(self):
         self.connection.close()
