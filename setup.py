@@ -3,6 +3,7 @@ from distutils.core import setup
 setup(
     name = 'pymydb',
     packages = ['pymydb'],
+    install_requires = ['pymysql'],
     version = '0.1',
     description = 'A wrapper over PyMySQL Package to simplify MySQL database usage',
     author = 'Adarsh Honawad',
